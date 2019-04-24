@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp/intra_process_setting.hpp"
 
 #include "performance_test/ros2/template_factory.hpp"
 #include "performance_test/ros2/options.hpp"

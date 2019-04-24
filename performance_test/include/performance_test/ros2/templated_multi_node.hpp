@@ -3,6 +3,7 @@
 
 #include "performance_test/ros2/names_utilities.hpp"
 #include "performance_test/ros2/multi_node.hpp"
+#include "rclcpp/intra_process_setting.hpp"
 
 #include "performance_test/srv/get_header.hpp"
 #include "performance_test/msg/stamped_vector.hpp" //This include is needed for std::enable_if std::is_same
@@ -55,10 +56,14 @@ struct TemplatedMultiNode : public MultiNode
         // if I have already created a publisher with this id, do nothing
         auto it = _publishers.find(id);
         if (it == _publishers.end()){
+           rclcpp::PublisherOptions options;  
+           options.use_intra_process_comm = rclcpp::IntraProcessSetting::Enable;
+           options.qos_profile = qos_profile;
 
             typename rclcpp::Publisher<MsgType>::SharedPtr publisher = this->create_publisher<MsgType>(
                 topic_name,
-                qos_profile);
+                1,
+                options);
 
             // store the publisher into the map structure
             _publishers[id] = publisher;
@@ -93,11 +98,22 @@ struct TemplatedMultiNode : public MultiNode
         if (it == _subscribers.end()){
 
             std::function<void(const typename MsgType::SharedPtr msg)> fcn = std::bind(&TemplatedMultiNode::topic_callback, this, std::placeholders::_1, id);
+            rclcpp::SubscriptionOptions options;
+            options.use_intra_process_comm = rclcpp::IntraProcessSetting::Enable;
+            options.qos_profile = qos_profile;
+
 
             typename rclcpp::Subscription<MsgType>::SharedPtr subscriber = this->create_subscription<MsgType>(
                 topic_name,
                 fcn,
-                qos_profile);
+                1,
+                options);
+                // qos_profile,
+                // // nullptr,
+                // // false,
+                // // nullptr,
+                // // nullptr,
+                // use_intra_process_comm = rclcpp::IntraProcessSetting::Enable);
 
             // store the subscriber into the map structure
             _subscribers[id] = subscriber;
