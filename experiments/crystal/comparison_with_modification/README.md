@@ -6,12 +6,15 @@ I modified the iRobot Perf test to utilize some of the newer options available t
 I ran 2 benchmarks one for comparing memory usage and another to check pub_sub (reliability , latency etc). 
 
 ## Summary 
-- Memory Experiment
+- Memory Experiment (static -- no message passing)
     - No significant improvement in rss / vsz
     - No significant improvement in CPU 
-- Pub/Sub experiment: 
+- Pub/Sub experiment (1 publisher sending messages to 1 subscriber): 
     - **Order of magnitude** improvement in Latency 
     - **99%** reliability_tot 
+    - **Significant** improvement in physical memory
+    - **Slight** improvement to virtual memory
+    - **Significant** improvement to CPU 
 
 ## Commands
 **Memory Experiment:**
@@ -50,3 +53,6 @@ bash scripts/pub_sub_ros2.sh
 |-----------|-----------|-----------|
 | latency |![plot](pub_sub/modified_latency.png)|![plot](pub_sub/original_latency.png)|
 | reliability_tot |![plot](pub_sub/modified_reliable_tot.png)|![plot](pub_sub/original_reliable_tot.png)|
+| rss | ![plot](pub_sub/modified_rss.png)|![plot](pub_sub/original_rss.png)|
+| vsz | ![plot](pub_sub/modified_vsz.png)|![plot](pub_sub/original_vsz.png)| 
+| cpu | ![plot](pub_sub/modified_cpu.png)|![plot](pub_sub/original_cpu.png)| 
