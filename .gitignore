@@ -33,3 +33,7 @@
 
 # Compiled Python
 *.pyc
+
+*build
+*install
+*log
