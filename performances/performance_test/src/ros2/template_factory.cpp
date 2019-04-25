@@ -37,7 +37,7 @@ std::vector<std::shared_ptr<performance_test::Node>> performance_test::TemplateF
     for (int node_id = start_id; node_id < end_id; node_id ++){
 
         std::string node_name = id_to_node_name(node_id);
-        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, use_ipc);
+        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, rclcpp::NodeOptions().use_intra_process_comms(use_ipc));
 
         if (verbose){
             auto ret = rcutils_logging_set_logger_level(node->get_logger().get_name(), RCUTILS_LOG_SEVERITY_DEBUG);
@@ -76,7 +76,7 @@ std::vector<std::shared_ptr<performance_test::Node>> performance_test::TemplateF
     for (int node_id = start_id; node_id < end_id; node_id++){
 
         std::string node_name = id_to_node_name(node_id);
-        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, use_ipc);
+        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, rclcpp::NodeOptions().use_intra_process_comms(use_ipc));
 
         if (verbose){
             auto ret = rcutils_logging_set_logger_level(node->get_logger().get_name(), RCUTILS_LOG_SEVERITY_DEBUG);
@@ -113,7 +113,7 @@ std::vector<std::shared_ptr<performance_test::Node>> performance_test::TemplateF
     for (int node_id = start_id; node_id < end_id; node_id++){
 
         std::string node_name = id_to_node_name(node_id);
-        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, use_ipc);
+        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, rclcpp::NodeOptions().use_intra_process_comms(use_ipc));
 
         if (verbose){
             auto ret = rcutils_logging_set_logger_level(node->get_logger().get_name(), RCUTILS_LOG_SEVERITY_DEBUG);
@@ -153,7 +153,7 @@ std::vector<std::shared_ptr<performance_test::Node>> performance_test::TemplateF
     for (int node_id = start_id; node_id < end_id; node_id++){
 
         std::string node_name = id_to_node_name(node_id);
-        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, use_ipc);
+        auto node = std::make_shared<performance_test::Node>(node_name, _ros2_namespace, rclcpp::NodeOptions().use_intra_process_comms(use_ipc));
 
         if (verbose){
             auto ret = rcutils_logging_set_logger_level(node->get_logger().get_name(), RCUTILS_LOG_SEVERITY_DEBUG);

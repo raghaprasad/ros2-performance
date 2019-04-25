@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp/node_options.hpp"
 
 #include "performance_test/ros2/communication.hpp"
 #include "performance_test/ros2/tracker.hpp"
@@ -27,8 +28,8 @@ friend class System;
 
 public:
 
-  Node(const std::string& name, const std::string& ros2_namespace, bool ipc = true)
-    : rclcpp::Node(name, ros2_namespace, ipc)
+  Node(const std::string& name, const std::string& ros2_namespace, const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+    : rclcpp::Node(name, ros2_namespace, options)
   {
     RCLCPP_INFO(this->get_logger(), "Node %s created", name.c_str());
   }
