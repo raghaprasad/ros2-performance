@@ -69,68 +69,75 @@ int main(int argc, char** argv)
     auto volga      = performance_test::Topic<benchmark::msg::Volga>(                               "volga"     );
     auto arkansas   = performance_test::Topic<benchmark::msg::Arkansas>(                            "arkansas"  );
 
-    rclcpp::NodeOptions & nodeOptions = rclcpp::NodeOptions().use_intra_process_comms(options.ipc);
+    // rclcpp::NodeOptions & nodeOptions = rclcpp::NodeOptions().use_intra_process_comms(options.ipc);
     // nodeOptions = nodeOptions.use_intra_process_comms(true);
     // Create nodes with pulishers and subscribers
-    auto montreal = std::make_shared<performance_test::Node>("montreal", "", nodeOptions);
-    montreal->add_periodic_publisher(amazon, 10ms, rmw_qos_profile_default);
-    montreal->add_periodic_publisher(nile,   10ms, rmw_qos_profile_default);
-    montreal->add_periodic_publisher(ganges, 10ms, rmw_qos_profile_default);
-    montreal->add_periodic_publisher(danube, 10ms, rmw_qos_profile_default);
+    rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
+    custom_qos_profile.history = rmw_qos_history_policy_t::RMW_QOS_POLICY_HISTORY_KEEP_LAST;
+    custom_qos_profile.depth = 1;
+    custom_qos_profile.reliability = rmw_qos_reliability_policy_t::RMW_QOS_POLICY_RELIABILITY_RELIABLE;
+    custom_qos_profile.durability = rmw_qos_durability_policy_t::RMW_QOS_POLICY_DURABILITY_VOLATILE;
+    custom_qos_profile.avoid_ros_namespace_conventions = false;
+
+    auto montreal = std::make_shared<performance_test::Node>("montreal", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    montreal->add_periodic_publisher(amazon, 10ms, custom_qos_profile);
+    montreal->add_periodic_publisher(nile,   10ms, custom_qos_profile);
+    montreal->add_periodic_publisher(ganges, 10ms, custom_qos_profile);
+    montreal->add_periodic_publisher(danube, 10ms, custom_qos_profile);
     low_end_sys.add_node(montreal);
 
-    auto lyon = std::make_shared<performance_test::Node>("lyon", "", nodeOptions);
-    lyon->add_subscriber(amazon, options.tracking_options, rmw_qos_profile_default);
-    lyon->add_periodic_publisher(tigris, 10ms, rmw_qos_profile_default);
+    auto lyon = std::make_shared<performance_test::Node>("lyon", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    lyon->add_subscriber(amazon, options.tracking_options, custom_qos_profile);
+    lyon->add_periodic_publisher(tigris, 10ms, custom_qos_profile);
     low_end_sys.add_node(lyon);
 
-    auto hamburg = std::make_shared<performance_test::Node>("hamburg", "", nodeOptions);
-    hamburg->add_subscriber(nile, options.tracking_options, rmw_qos_profile_default);
-    hamburg->add_subscriber(tigris, options.tracking_options, rmw_qos_profile_default);
-    hamburg->add_subscriber(ganges, options.tracking_options, rmw_qos_profile_default);
-    hamburg->add_subscriber(danube, options.tracking_options, rmw_qos_profile_default);
-    hamburg->add_periodic_publisher(parana, 10ms, rmw_qos_profile_default);
+    auto hamburg = std::make_shared<performance_test::Node>("hamburg", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    hamburg->add_subscriber(nile, options.tracking_options, custom_qos_profile);
+    hamburg->add_subscriber(tigris, options.tracking_options, custom_qos_profile);
+    hamburg->add_subscriber(ganges, options.tracking_options, custom_qos_profile);
+    hamburg->add_subscriber(danube, options.tracking_options, custom_qos_profile);
+    hamburg->add_periodic_publisher(parana, 10ms, custom_qos_profile);
     low_end_sys.add_node(hamburg);
 
-    auto osaka = std::make_shared<performance_test::Node>("osaka", "", nodeOptions);
-    osaka->add_subscriber(parana, options.tracking_options, rmw_qos_profile_default);
-    osaka->add_periodic_publisher(salween, 100ms, rmw_qos_profile_default);
+    auto osaka = std::make_shared<performance_test::Node>("osaka", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    osaka->add_subscriber(parana, options.tracking_options, custom_qos_profile);
+    osaka->add_periodic_publisher(salween, 100ms, custom_qos_profile);
     low_end_sys.add_node(osaka);
 
-    auto mandalay = std::make_shared<performance_test::Node>("mandalay", "", nodeOptions);
-    mandalay->add_subscriber(salween, options.tracking_options, rmw_qos_profile_default);
-    mandalay->add_subscriber(danube, options.tracking_options, rmw_qos_profile_default);
+    auto mandalay = std::make_shared<performance_test::Node>("mandalay", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    mandalay->add_subscriber(salween, options.tracking_options, custom_qos_profile);
+    mandalay->add_subscriber(danube, options.tracking_options, custom_qos_profile);
     // For dynamic messages, we can specify the size with a 3rd argument
-    mandalay->add_periodic_publisher(missouri, 100ms, rmw_qos_profile_default, 10000);
+    mandalay->add_periodic_publisher(missouri, 100ms, custom_qos_profile, 10000);
     low_end_sys.add_node(mandalay);
 
-    auto ponce = std::make_shared<performance_test::Node>("ponce", "", nodeOptions);
-    ponce->add_subscriber(missouri, options.tracking_options, rmw_qos_profile_default);
-    ponce->add_subscriber(danube, options.tracking_options, rmw_qos_profile_default);
-    ponce->add_subscriber(volga, options.tracking_options, rmw_qos_profile_default);
-    ponce->add_periodic_publisher(mekong, 500ms, rmw_qos_profile_default, 100);
-    ponce->add_periodic_publisher(congo,  100ms, rmw_qos_profile_default);
+    auto ponce = std::make_shared<performance_test::Node>("ponce", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    ponce->add_subscriber(missouri, options.tracking_options, custom_qos_profile);
+    ponce->add_subscriber(danube, options.tracking_options, custom_qos_profile);
+    ponce->add_subscriber(volga, options.tracking_options, custom_qos_profile);
+    ponce->add_periodic_publisher(mekong, 500ms, custom_qos_profile, 100);
+    ponce->add_periodic_publisher(congo,  100ms, custom_qos_profile);
     low_end_sys.add_node(ponce);
 
-    auto barcelona = std::make_shared<performance_test::Node>("barcelona", "", nodeOptions);
-    barcelona->add_subscriber(mekong, options.tracking_options, rmw_qos_profile_default);
-    barcelona->add_periodic_publisher(lena, 100ms, rmw_qos_profile_default, 50);
+    auto barcelona = std::make_shared<performance_test::Node>("barcelona", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    barcelona->add_subscriber(mekong, options.tracking_options, custom_qos_profile);
+    barcelona->add_periodic_publisher(lena, 100ms, custom_qos_profile, 50);
     low_end_sys.add_node(barcelona);
 
-    auto georgetown = std::make_shared<performance_test::Node>("georgetown", "", nodeOptions);
-    georgetown->add_subscriber(lena, options.tracking_options, rmw_qos_profile_default);
-    georgetown->add_periodic_publisher(volga, 500ms, rmw_qos_profile_default);
+    auto georgetown = std::make_shared<performance_test::Node>("georgetown", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    georgetown->add_subscriber(lena, options.tracking_options, custom_qos_profile);
+    georgetown->add_periodic_publisher(volga, 500ms, custom_qos_profile);
     low_end_sys.add_node(georgetown);
 
-    auto geneva = std::make_shared<performance_test::Node>("geneva", "", nodeOptions);
-    geneva->add_subscriber(congo, options.tracking_options, rmw_qos_profile_default);
-    geneva->add_subscriber(danube, options.tracking_options, rmw_qos_profile_default);
-    geneva->add_subscriber(parana, options.tracking_options, rmw_qos_profile_default);
-    geneva->add_periodic_publisher(arkansas, 100ms, rmw_qos_profile_default);
+    auto geneva = std::make_shared<performance_test::Node>("geneva", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    geneva->add_subscriber(congo, options.tracking_options, custom_qos_profile);
+    geneva->add_subscriber(danube, options.tracking_options, custom_qos_profile);
+    geneva->add_subscriber(parana, options.tracking_options, custom_qos_profile);
+    geneva->add_periodic_publisher(arkansas, 100ms, custom_qos_profile);
     low_end_sys.add_node(geneva);
 
-    auto arequipa = std::make_shared<performance_test::Node>("arequipa", "", nodeOptions);
-    arequipa->add_subscriber(arkansas, options.tracking_options, rmw_qos_profile_default);
+    auto arequipa = std::make_shared<performance_test::Node>("arequipa", "", rclcpp::NodeOptions().use_intra_process_comms(options.ipc));
+    arequipa->add_subscriber(arkansas, options.tracking_options, custom_qos_profile);
     low_end_sys.add_node(arequipa);
 
     low_end_sys.spin();

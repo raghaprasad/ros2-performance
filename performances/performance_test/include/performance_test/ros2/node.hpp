@@ -10,6 +10,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/node_options.hpp"
+#include "rclcpp/intra_process_setting.hpp"
 
 #include "performance_test/ros2/communication.hpp"
 #include "performance_test/ros2/tracker.hpp"
@@ -47,10 +48,14 @@ public:
       std::placeholders::_1
     );
 
+    rclcpp::SubscriptionOptions options;
+    options.use_intra_process_comm = rclcpp::IntraProcessSetting::NodeDefault;
+    options.qos_profile = qos_profile;
+
     typename rclcpp::Subscription<Msg>::SharedPtr sub =
       this->create_subscription<Msg>(topic.name,
                                      callback_function,
-                                     qos_profile);
+                                     1, options);
 
     _subs.insert({ topic.name, { sub, Tracker(this->get_name(), topic.name, tracking_options) } });
 
@@ -86,7 +91,10 @@ public:
   void add_publisher(const Topic<Msg>& topic, rmw_qos_profile_t qos_profile = rmw_qos_profile_default)
   {
 
-    typename rclcpp::Publisher<Msg>::SharedPtr pub = this->create_publisher<Msg>(topic.name, qos_profile);
+    rclcpp::PublisherOptions options;
+    options.use_intra_process_comm = rclcpp::IntraProcessSetting::NodeDefault;
+    options.qos_profile = qos_profile;
+    typename rclcpp::Publisher<Msg>::SharedPtr pub = this->create_publisher<Msg>(topic.name, 1, options);
 
     _pubs.insert({ topic.name, { pub, Tracker(this->get_name(), topic.name, Tracker::TrackingOptions()) } });
 
